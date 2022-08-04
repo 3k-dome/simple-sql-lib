@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 
 namespace SimpleSqlLib {
+
     public class QueryExecutor {
 
         private readonly string _conString;
@@ -12,10 +13,11 @@ namespace SimpleSqlLib {
         }
 
         public SqlDataReader Execute(SqlCommand command) {
-            using (SqlConnection connection = new(this._conString)) {
-                command.Connection = connection;
+            SqlConnection connection = new(this._conString);
+            command.Connection = connection;
+            using (command) {
                 command.Connection.Open();
-                return command.ExecuteReader();
+                return command.ExecuteReader(CommandBehavior.CloseConnection);
             }
         }
 

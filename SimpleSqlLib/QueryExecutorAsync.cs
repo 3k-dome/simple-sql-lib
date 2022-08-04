@@ -4,6 +4,7 @@ using System.Data;
 using System.Threading.Tasks;
 
 namespace SimpleSqlLib {
+
     public class QueryExecutorAsync {
 
         private readonly string _conString;
@@ -13,10 +14,11 @@ namespace SimpleSqlLib {
         }
 
         public async Task<SqlDataReader> ExecuteAsync(SqlCommand command) {
-            using (SqlConnection connection = new(this._conString)) {
-                command.Connection = connection;
+            SqlConnection connection = new(this._conString);
+            command.Connection = connection;
+            using (command) {
                 await command.Connection.OpenAsync();
-                return await command.ExecuteReaderAsync();
+                return await command.ExecuteReaderAsync(CommandBehavior.CloseConnection);
             }
         }
 
